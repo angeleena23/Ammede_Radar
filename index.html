@@ -1,1 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMMEDE RADAR - Indian Household Curfew Anger & Punishment Simulator</title>
+  <meta name="description" content="A humorous, culturally accurate household comedy web application calculating Amma's anger level and subjecting the user to dynamic video punishments!">
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-blue-center: #6b88e2;
+      --bg-blue-outer: #4b66c4;
+      --card-border: #bcd3ff;
+      --text-dark: #223354;
+      --stroke-dark: #1e293b;
+      --accent-yellow: #fde047;
+      --btn-blue: #4663d9;
+      --btn-blue-hover: #3752c4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      background: radial-gradient(circle at center, var(--bg-blue-center) 0%, var(--bg-blue-outer) 100%);
+      transition: background 0.8s ease;
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Sunburst Background */
+    .sunburst-background {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.25;
+      background: repeating-conic-gradient(
+        from 0deg at 50% 50%,
+        rgba(255, 255, 255, 0.45) 0deg 12deg,
+        transparent 12deg 24deg
+      );
+      animation: rotateSunburst 140s linear infinite;
+    }
+
+    @keyframes rotateSunburst {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Sound Control Button */
+    .sound-control-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: #ffffff;
+      border: 3px solid #1e293b;
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 0 #1e293b;
+      transition: all 0.15s ease;
+    }
+
+    .sound-control-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #1e293b;
+    }
+
+    /* Viewport & App Frames */
+    #app-viewport {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 840px;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app-frame {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      animation: frameFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .app-frame.active {
+      display: flex;
+    }
+
+    @keyframes frameFadeIn {
+      from { opacity: 0; transform: scale(0.96) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Frame 1 Landing Page Styling & Floating Weapon Animations */
+    .full-homescreen-container {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .full-homescreen-img {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      max-height: 75vh;
+      object-fit: contain;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.35), 0 4px 0 #1b263b;
+      border: 4px solid #ffffff;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .full-homescreen-img:hover {
+      transform: scale(1.018);
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.45), 0 6px 0 #1b263b;
+    }
+
+    .floating-weapon {
+      position: absolute;
+      pointer-events: none;
+      z-index: 15;
+      filter: drop-shadow(0 8px 16px rgba(15, 23, 42, 0.35));
+    }
+
+    .weapon-tl {
+      top: -15px;
+      left: -20px;
+      width: 140px;
+      height: auto;
+      animation: floatWobbleTL 4s ease-in-out infinite alternate;
+    }
+
+    .weapon-tr {
+      top: -20px;
+      right: -20px;
+      width: 145px;
+      height: auto;
+      animation: floatWobbleTR 4.5s ease-in-out infinite alternate;
+    }
+
+    .weapon-bl {
+      bottom: 85px;
+      left: -15px;
+      width: 150px;
+      height: auto;
+      animation: floatWobbleBL 3.8s ease-in-out infinite alternate;
+    }
+
+    .weapon-br {
+      bottom: 80px;
+      right: -10px;
+      width: 130px;
+      height: auto;
+      animation: floatWobbleBR 4.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatWobbleTL {
+      0% { transform: translateY(0px) rotate(-30deg) scale(1); }
+      50% { transform: translateY(-12px) rotate(-24deg) scale(1.05); }
+      100% { transform: translateY(6px) rotate(-35deg) scale(0.97); }
+    }
+
+    @keyframes floatWobbleTR {
+      0% { transform: translateY(0px) rotate(25deg) scale(1); }
+      50% { transform: translateY(-15px) rotate(32deg) scale(1.06); }
+      100% { transform: translateY(8px) rotate(18deg) scale(0.96); }
+    }
+
+    @keyframes floatWobbleBL {
+      0% { transform: translateY(0px) rotate(-25deg) scale(1); }
+      50% { transform: translateY(-10px) rotate(-18deg) scale(1.05); }
+      100% { transform: translateY(8px) rotate(-30deg) scale(0.97); }
+    }
+
+    @keyframes floatWobbleBR {
+      0% { transform: translateY(0px) rotate(40deg) scale(1); }
+      50% { transform: translateY(-14px) rotate(46deg) scale(1.06); }
+      100% { transform: translateY(6px) rotate(34deg) scale(0.96); }
+    }
+
+    /* Reference Cards for Frame 2 & 3 */
+    .ref-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 3.5px solid #bcd3ff;
+      border-radius: 24px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 680px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.2), 0 4px 0 #1b263b;
+      position: relative;
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
+    }
+
+    .form-row:not(:last-child) {
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .icon-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #3b82f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .row-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #223354;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex: 1;
+    }
+
+    .gender-pill-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .gender-pill {
+      padding: 10px 20px;
+      border: 2.5px solid #1e293b;
+      border-radius: 12px;
+      background: #ffffff;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #1e293b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gender-pill.active {
+      background: #3b82f6;
+      color: #ffffff;
+      box-shadow: 0 4px 0 #1e293b;
+    }
+
+    .input-picker {
+      padding: 10px 16px;
+      border: 2.5px solid #1e293b;
+      border-radius: 12px;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1e293b;
+      background: #ffffff;
+      outline: none;
+      text-align: center;
+      width: 140px;
+    }
+
+    .submit-btn-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 24px;
+      gap: 12px;
+    }
+
+    .btn-submit-main {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.45rem;
+      color: #ffffff;
+      background: var(--btn-blue);
+      border: 3.5px solid #1b263b;
+      border-radius: 18px;
+      padding: 16px 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #1b263b;
+      transition: all 0.15s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-submit-main:hover {
+      background: var(--btn-blue-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 11px 0 #1b263b;
+    }
+
+    .btn-submit-main:active {
+      transform: translateY(4px);
+      box-shadow: 0 3px 0 #1b263b;
+    }
+
+    .accent-dashes {
+      color: #fde047;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    /* Frame 3 Question Interrogation Card */
+    .question-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: #3867b0;
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .question-card-body {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.3rem, 3.5vw, 1.7rem);
+      color: #1e293b;
+      text-align: center;
+      text-transform: uppercase;
+      line-height: 1.35;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
+    }
+
+    .choice-btns-row {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+      width: 100%;
+    }
+
+    .btn-choice-ref {
+      flex: 1;
+      padding: 16px 20px;
+      background: #ffffff;
+      border: 3.5px solid #6ab4f7;
+      border-radius: 16px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.8rem;
+      color: #3567a5;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 6px 0 #6ab4f7;
+      transition: all 0.15s ease;
+      -webkit-text-stroke: 1.5px #3567a5;
+    }
+
+    .btn-choice-ref:hover {
+      background: #f0f9ff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #6ab4f7;
+    }
+
+    .btn-choice-ref:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #6ab4f7;
+    }
+
+    /* Transition Screens (Frames 4.1, 4.2, 4.3) */
+    .fullscreen-level-transition {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .bg-level-1-3 {
+      background: radial-gradient(circle at center, #2e8adb 0%, #1c5ba6 60%, #0d366b 100%);
+    }
+
+    .bg-level-4-6 {
+      background: radial-gradient(circle at center, #0e4c6e 0%, #072d42 60%, #031521 100%);
+    }
+
+    .bg-level-7-10 {
+      background: radial-gradient(circle at center, #800a0a 0%, #470202 60%, #1f0000 100%);
+      animation: alertPulse 0.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes alertPulse {
+      from { filter: brightness(1); }
+      to { filter: brightness(1.3); }
+    }
+
+    .speed-rays-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-conic-gradient(
+        from 0deg at 50% 50%,
+        rgba(255, 255, 255, 0.18) 0deg 6deg,
+        transparent 6deg 12deg
+      );
+    }
+
+    .lightning-sparks-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.4;
+      background-image: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.8) 0%, transparent 20%),
+                        radial-gradient(circle at 70% 60%, rgba(255,255,255,0.8) 0%, transparent 20%);
+    }
+
+    .ref-level-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: clamp(3.5rem, 12vw, 7rem);
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      -webkit-text-stroke: 5px #111827;
+      paint-order: stroke fill;
+      text-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      position: relative;
+      z-index: 10;
+    }
+
+    /* HTML5 Canvas Video Cutscene Container Box */
+    .video-cutscene-container {
+      width: 100%;
+      height: 330px;
+      background: #0f172a;
+      border: 3.5px solid #1b263b;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .video-canvas-player {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-overlay-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(239, 68, 68, 0.9);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 2px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      z-index: 25;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rec-dot {
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      animation: blinkRec 1s infinite;
+    }
+
+    @keyframes blinkRec {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .verdict-badge {
+      display: inline-block;
+      padding: 6px 18px;
+      background: #fde047;
+      border: 2.5px solid #1e293b;
+      border-radius: 20px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #1e293b;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 0 #1e293b;
+    }
+
+    .verdict-quote {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+      line-height: 1.4;
+      color: #1e293b;
+      text-align: center;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .malayalam-climax-banner {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      color: #ef4444;
+      text-align: center;
+      -webkit-text-stroke: 1.5px #1e293b;
+      text-shadow: 2px 2px 0 #1e293b, 0 0 20px rgba(239, 68, 68, 0.5);
+      margin: 10px 0;
+      animation: pulseClimax 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseClimax {
+      from { transform: scale(1); }
+      to { transform: scale(1.06); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sunburst Background -->
+  <div class="sunburst-background"></div>
+
+  <!-- Sound Toggle Control -->
+  <button class="sound-control-btn" onclick="toggleAudio()">
+    <span id="audio-icon">🔊</span>
+    <span id="audio-label">SOUND ON</span>
+  </button>
+
+  <!-- Application Main Viewport -->
+  <div id="app-viewport">
+
+    <!-- ==================== FRAME 1: HOMESCREEN LANDING PAGE ==================== -->
+    <div id="frame-1" class="app-frame active">
+      <div class="full-homescreen-container" onclick="switchFrame(2)">
+        <!-- Floating Weapon Icons with Wobble Animations -->
+        <img src="chattakam.png" alt="Chattakam" class="floating-weapon weapon-tl">
+        <img src="chappal.png" alt="Chappal" class="floating-weapon weapon-tr">
+        <img src="belan.png" alt="Chapatti Roller" class="floating-weapon weapon-bl">
+        <img src="belan.png" alt="Chooral" class="floating-weapon weapon-br">
+
+        <!-- Render frame1.png graphic entirely on homescreen -->
+        <img src="frame1.png" alt="WELCOME TO AMMEDE RADAR" class="full-homescreen-img">
+        
+        <!-- CLICK HERE TO CONTINUE Button -->
+        <div class="submit-btn-wrapper" style="margin-top: 24px;">
+          <span class="accent-dashes">\ \ \</span>
+          <button class="btn-submit-main" onclick="event.stopPropagation(); switchFrame(2)">
+            CLICK HERE TO CONTINUE 🚀
+          </button>
+          <span class="accent-dashes">/ / /</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== FRAME 2: USER DETAILS INPUT ==================== -->
+    <div id="frame-2" class="app-frame">
+      <div class="ref-card">
+        <!-- Gender Selection Row -->
+        <div class="form-row">
+          <div class="icon-badge">👤</div>
+          <div class="row-label">GENDER</div>
+          <div class="gender-pill-group">
+            <button class="gender-pill active" id="gender-btn-male" onclick="setGender('male')">
+              ♂ MALE
+            </button>
+            <button class="gender-pill" id="gender-btn-female" onclick="setGender('female')">
+              ♀ FEMALE
+            </button>
+          </div>
+        </div>
+
+        <!-- Curfew Entrance Time Row -->
+        <div class="form-row">
+          <div class="icon-badge">🕒</div>
+          <div class="row-label">WHAT TIME DID YOU ENTER HOME?</div>
+          <input type="time" class="input-picker" id="time-input" value="23:30">
+        </div>
+
+        <!-- Hours Late Row -->
+        <div class="form-row">
+          <div class="icon-badge">⏳</div>
+          <div class="row-label">BY HOW MANY HOURS ARE YOU LATE?</div>
+          <input type="number" class="input-picker" id="hours-input" min="0" max="12" step="0.5" value="2.5">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="submit-btn-wrapper">
+          <span class="accent-dashes">\ \ \</span>
+          <button class="btn-submit-main" onclick="submitDetails()">
+            SUBMIT
+          </button>
+          <span class="accent-dashes">/ / /</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== FRAME 3: DYNAMIC 10-QUESTION INTERROGATION ==================== -->
+    <div id="frame-3" class="app-frame">
+      <div class="ref-card" style="margin-top: 20px;">
+        <div class="question-card-title" id="q-number-label">
+          QUESTION 1 OF 10:
+        </div>
+
+        <div class="question-card-body" id="q-text-label">
+          DID YOU ENTER HOME PAST YOUR CURFEW TIME WITHOUT CALLING AMMA FIRST?
+        </div>
+
+        <div class="choice-btns-row">
+          <button class="btn-choice-ref" onclick="handleAnswer(true)">YES</button>
+          <button class="btn-choice-ref" onclick="handleAnswer(false)">NO</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== FRAME 4: LEVEL REVEAL TRANSITION SCREENS ==================== -->
+    <div id="frame-4" class="fullscreen-level-transition" style="display: none;">
+      <div class="speed-rays-overlay"></div>
+      <div class="lightning-sparks-overlay"></div>
+      <div class="ref-level-text" id="level-reveal-text">LEVEL 1</div>
+    </div>
+
+
+    <!-- ==================== FRAME 5: DYNAMIC VIDEO CUTSCENE & VERDICT ==================== -->
+    <div id="frame-5" class="app-frame">
+      <h1 class="ref-main-heading" style="font-size: 2.2rem; margin-bottom: 12px;">AMMA'S VERDICT</h1>
+
+      <div class="ref-card">
+        <!-- 60FPS Dynamic Video Canvas Animation Cutscene Box -->
+        <div class="video-cutscene-container">
+          <div class="video-overlay-badge">
+            <span class="rec-dot"></span> DYNAMIC VIDEO PUNISHMENT
+          </div>
+          <canvas id="video-cutscene-canvas" class="video-canvas-player" width="640" height="330"></canvas>
+        </div>
+
+        <!-- Verdict Text & Climax -->
+        <div style="text-align: center; margin-top: 20px;">
+          <div class="verdict-badge" id="verdict-badge-text">LEVEL 10: MAXIMUM DAMAGE</div>
+          <div class="verdict-quote" id="verdict-quote-text">
+            "NUCLEAR IMPACT! Amma aims and throws the Chapati Roller (Belan) directly at you with extreme velocity!"
+          </div>
+
+          <!-- Malayalam Climax Banner -->
+          <div class="malayalam-climax-banner">
+            "Nee theernada.. nee theernu"
+          </div>
+          <div style="font-size: 0.95rem; color: #64748b; font-weight: 700; margin-bottom: 20px;">
+            (നീ തീർന്നടാ.. നീ തീർന്നു - You are finished, bro!)
+          </div>
+
+          <div class="submit-btn-wrapper">
+            <button class="btn-submit-main" style="padding: 12px 30px; font-size: 1.15rem;" onclick="resetAllState()">
+              🔄 RETURN TO HOME SCREEN
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ==========================================================================
+       GLOBAL STATE & AUDIO ENGINE
+       ========================================================================== */
+    let appState = {
+      gender: 'male',
+      curfewTime: '23:30',
+      hoursLate: 2.5,
+      currentQuestionIdx: 0,
+      yesAnswersCount: 0,
+      calculatedLevel: 1,
+      soundEnabled: true
+    };
+
+    let audioContext = null;
+    let videoAnimId = null;
+
+    // Image Preloader for 100% Clean Super-Cleaned Transparent PNG Assets
+    const assets = {
+      amma: new Image(),
+      son: new Image(),
+      daughter: new Image(),
+      chattakam: new Image(),
+      chappal: new Image(),
+      belan: new Image()
+    };
+
+    assets.amma.src = 'amma.png';
+    assets.son.src = 'son.png';
+    assets.daughter.src = 'daughter.png';
+    assets.chattakam.src = 'chattakam.png';
+    assets.chappal.src = 'chappal.png';
+    assets.belan.src = 'belan.png';
+
+    function initAudioEngine() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }
+
+    function toggleAudio() {
+      appState.soundEnabled = !appState.soundEnabled;
+      document.getElementById('audio-icon').textContent = appState.soundEnabled ? '🔊' : '🔇';
+      document.getElementById('audio-label').textContent = appState.soundEnabled ? 'SOUND ON' : 'MUTED';
+      if (appState.soundEnabled) initAudioEngine();
+    }
+
+    function triggerAudio(type, extraValue = 1) {
+      if (!appState.soundEnabled) return;
+      initAudioEngine();
+      const now = audioContext.currentTime;
+
+      if (type === 'click') {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(700, now);
+        osc.frequency.exponentialRampToValueAtTime(180, now + 0.08);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+      else if (type === 'whoosh') {
+        const bufferSize = audioContext.sampleRate * 0.35;
+        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = audioContext.createBufferSource();
+        noise.buffer = buffer;
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(400, now);
+        filter.frequency.exponentialRampToValueAtTime(2400, now + 0.18);
+        filter.frequency.exponentialRampToValueAtTime(300, now + 0.35);
+        const gain = audioContext.createGain();
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+        noise.connect(filter);
+        filter.connect(audioContext.destination);
+        noise.start(now);
+        noise.stop(now + 0.35);
+      }
+      else if (type === 'slap') {
+        const bufferSize = audioContext.sampleRate * 0.25;
+        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = audioContext.createBufferSource();
+        noise.buffer = buffer;
+        const gain = audioContext.createGain();
+        gain.gain.setValueAtTime(0.9, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+        noise.connect(gain);
+        gain.connect(audioContext.destination);
+        noise.start(now);
+        noise.stop(now + 0.22);
+      }
+      else if (type === 'alarm') {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(550 + extraValue * 40, now);
+        osc.frequency.linearRampToValueAtTime(850 + extraValue * 40, now + 0.25);
+        osc.frequency.linearRampToValueAtTime(550, now + 0.5);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      }
+    }
+
+    /* ==========================================================================
+       FRAME NAVIGATION
+       ========================================================================== */
+    function switchFrame(frameNum) {
+      triggerAudio('click');
+      document.querySelectorAll('.app-frame').forEach(f => f.classList.remove('active'));
+      const target = document.getElementById(`frame-${frameNum}`);
+      if (target) target.classList.add('active');
+
+      // Lock Frame 1 & 2 Background 100% to #6b88e2 Cornflower Blue
+      if (frameNum === 1 || frameNum === 2) {
+        document.body.style.background = 'radial-gradient(circle at center, var(--bg-blue-center) 0%, var(--bg-blue-outer) 100%)';
+      } else if (frameNum === 5) {
+        const lvl = appState.calculatedLevel;
+        if (lvl <= 3) {
+          document.body.style.background = 'radial-gradient(circle at center, #2e8adb 0%, #1c5ba6 60%, #0d366b 100%)';
+        } else if (lvl <= 6) {
+          document.body.style.background = 'radial-gradient(circle at center, #0e4c6e 0%, #072d42 60%, #031521 100%)';
+        } else {
+          document.body.style.background = 'radial-gradient(circle at center, #800a0a 0%, #470202 60%, #1f0000 100%)';
+        }
+      }
+    }
+
+    function setGender(selectedGender) {
+      triggerAudio('click');
+      appState.gender = selectedGender;
+      document.getElementById('gender-btn-male').classList.toggle('active', selectedGender === 'male');
+      document.getElementById('gender-btn-female').classList.toggle('active', selectedGender === 'female');
+    }
+
+    function submitDetails() {
+      triggerAudio('click');
+      appState.curfewTime = document.getElementById('time-input').value || '23:30';
+      appState.hoursLate = parseFloat(document.getElementById('hours-input').value) || 2;
+      appState.currentQuestionIdx = 0;
+      appState.yesAnswersCount = 0;
+
+      switchFrame(3);
+      renderQuestion();
+    }
+
+    /* ==========================================================================
+       INVERTED QUESTION LOGIC (YES = TROUBLE / BAD CHOICE)
+       ========================================================================== */
+    function getDynamicQuestions() {
+      const isFemale = appState.gender === 'female';
+      const isLateSevere = appState.hoursLate >= 3;
+
+      return [
+        { text: "DID YOU ENTER HOME PAST YOUR CURFEW TIME WITHOUT CALLING AMMA FIRST?" },
+        { text: "WAS YOUR PHONE SWITCHED OFF OR IGNORED WHILE AMMA WAS CALLING YOU?" },
+        { text: isLateSevere ? "DID YOU TRY TO QUIETLY CREEP PAST THE GATE HOPING IT WOULDN'T CREAK?" : "DID YOU WALK IN SMELLING LIKE HOTEL BIRYANI OR STREET FOOD?" },
+        { text: isFemale ? "DID YOU TELL AMMA YOU WERE AT 'ANJALI'S HOUSE' WHEN ANJALI'S MOM CALLED 10 MINS AGO?" : "DID YOUR FRIENDS DROP YOU OFF ON A LOUD BIKE WITH MODIFIED EXHAUST?" },
+        { text: "DID YOU WALK INTO THE KITCHEN TO EAT COLD RICE WITHOUT WASHING UP FIRST?" },
+        { text: "WHEN AMMA ASKED 'WHERE WERE YOU?', DID YOU GIVE A FAKE EXCUSE ABOUT TRAFFIC?" },
+        { text: "DID YOU FORGET TO BUY THE MILK PACKET AMMA EXPLICITLY ASKED YOU TO BRING HOME?" },
+        { text: "ARE YOUR SHOES LEFT SCATTERED RIGHT IN FRONT OF THE MAIN ENTRANCE DOOR?" },
+        { text: "DID YOU TRY TO SMILE AND COMPLIMENT AMMA JUST TO ESCAPE GETTING SCOLDED?" },
+        { text: "BE HONEST: DO YOU DESERVE GETTING PUNISHED BY AMMA RIGHT NOW?" }
+      ];
+    }
+
+    function renderQuestion() {
+      const qList = getDynamicQuestions();
+      const q = qList[appState.currentQuestionIdx];
+
+      document.getElementById('q-number-label').textContent = `QUESTION ${appState.currentQuestionIdx + 1} OF 10:`;
+      document.getElementById('q-text-label').textContent = q.text;
+
+      // Lock base background to #6b88e2 and only shift red strictly proportional to YES answers
+      const yesRatio = appState.yesAnswersCount / 10;
+      
+      // Interpolate RGB from #6b88e2 (rgb(107, 136, 226)) to Angry Red (rgb(165, 25, 25))
+      const r = Math.round(107 + yesRatio * 58);
+      const g = Math.round(136 - yesRatio * 111);
+      const b = Math.round(226 - yesRatio * 201);
+
+      const r2 = Math.max(0, r - 35);
+      const g2 = Math.max(0, g - 20);
+      const b2 = Math.max(0, b - 20);
+
+      document.body.style.background = `radial-gradient(circle at center, rgb(${r}, ${g}, ${b}) 0%, rgb(${r2}, ${g2}, ${b2}) 100%)`;
+    }
+
+    function handleAnswer(isYes) {
+      triggerAudio('click');
+
+      // YES is ALWAYS the bad choice that increments anger score!
+      if (isYes) {
+        appState.yesAnswersCount++;
+      }
+
+      appState.currentQuestionIdx++;
+
+      if (appState.currentQuestionIdx < 10) {
+        renderQuestion();
+      } else {
+        let baseLevel = appState.yesAnswersCount;
+        if (appState.hoursLate >= 4) baseLevel += 2;
+        else if (appState.hoursLate >= 2) baseLevel += 1;
+
+        appState.calculatedLevel = Math.min(10, Math.max(1, baseLevel));
+        showLevelTransition();
+      }
+    }
+
+    /* ==========================================================================
+       FRAME 4: LEVEL REVEAL TRANSITION SCREENS
+       ========================================================================== */
+    function showLevelTransition() {
+      const lvl = appState.calculatedLevel;
+      const transEl = document.getElementById('frame-4');
+      const textEl = document.getElementById('level-reveal-text');
+
+      document.querySelectorAll('.app-frame').forEach(f => f.classList.remove('active'));
+      transEl.style.display = 'flex';
+
+      if (lvl <= 3) {
+        transEl.className = 'fullscreen-level-transition bg-level-1-3';
+      } else if (lvl <= 6) {
+        transEl.className = 'fullscreen-level-transition bg-level-4-6';
+      } else {
+        transEl.className = 'fullscreen-level-transition bg-level-7-10';
+        triggerAudio('alarm', 10);
+      }
+
+      textEl.textContent = `LEVEL ${lvl}`;
+
+      setTimeout(() => {
+        transEl.style.display = 'none';
+        setupVerdictVideoCutscene();
+        switchFrame(5);
+      }, 2400);
+    }
+
+    /* ==========================================================================
+       60FPS DYNAMIC VIDEO CUTSCENE ENGINE
+       ========================================================================== */
+    const verdictData = {
+      1: { badge: "LEVEL 1: SAFE / GENTLE WARNING", quote: "Amma looks you straight in the eye with silent disappointment: 'Never repeat this again.'", weapon: null },
+      2: { badge: "LEVEL 2: THE INTERROGATION TIER", quote: "'Why are you always late? Where were you? How many times did I call you? Don't you have class tomorrow?!'", weapon: null },
+      3: { badge: "LEVEL 3: EMOTIONAL BLACKMAIL TIER", quote: "'Is this how you respect the hot food kept on the table? Do you want me in the hospital with high blood pressure?'", weapon: null },
+      4: { badge: "LEVEL 4: THE WARNING TIER", quote: "Amma sternly holds up her weapon warning: 'Next time I won't speak... the weapon will speak!'", weapon: "chattakam" },
+      5: { badge: "LEVEL 5: THE LECTURE TIER", quote: "Amma paces back and forth lecturing on responsibility: 'Look at Sharma ji's son! He comes home at 7 PM!'", weapon: "belan" },
+      6: { badge: "LEVEL 6: THE EDGE TIER", quote: "'You are standing right on the edge! One more minute late and your packed bags will be outside the house!'", weapon: "belan" },
+      7: { badge: "LEVEL 7: THE CHOORAL TIER (BAMBOO CANE)", quote: "DYNAMIC VIDEO: Amma aims and throws the Chooral cane directly at you!", weapon: "belan" },
+      8: { badge: "LEVEL 8: THE CHATTAKAM TIER (STEEL SPATULA)", quote: "DYNAMIC VIDEO: Amma launches the stainless steel Chattakam spatula like a deadly missile!", weapon: "chattakam" },
+      9: { badge: "LEVEL 9: THE CHAPPAL TIER (FLIP-FLOP)", quote: "DYNAMIC VIDEO: UNSTOPPABLE HEAT-SEEKING ASSAULT! Amma throws her legendary rubber Chappal!", weapon: "chappal" },
+      10: { badge: "LEVEL 10: MAXIMUM DAMAGE (CHAPATI ROLLER)", quote: "DYNAMIC VIDEO: NUCLEAR IMPACT! Amma aims and throws the Chapati Roller (Belan) directly at you with extreme velocity!", weapon: "belan" }
+    };
+
+    function setupVerdictVideoCutscene() {
+      const lvl = appState.calculatedLevel;
+      const v = verdictData[lvl];
+
+      document.getElementById('verdict-badge-text').textContent = v.badge;
+      document.getElementById('verdict-quote-text').textContent = v.quote;
+
+      const canvas = document.getElementById('video-cutscene-canvas');
+      const ctx = canvas.getContext('2d');
+      const userImgAsset = appState.gender === 'female' ? assets.daughter : assets.son;
+      const weaponAsset = v.weapon ? assets[v.weapon] : null;
+
+      if (videoAnimId) cancelAnimationFrame(videoAnimId);
+
+      let frameCount = 0;
+      const startTime = performance.now();
+      let hasTriggeredWhoosh = false;
+      let hasTriggeredImpact = false;
+
+      function renderVideoFrame(timestamp) {
+        const progress = (timestamp - startTime) / 1000;
+        frameCount++;
+
+        // Clear Canvas with Dark Room Background Inside Video Box
+        ctx.fillStyle = '#0b1329';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Ambient Grid Lighting
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 40) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 40) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+
+        // Camera Pan & Zoom FX
+        ctx.save();
+        const cameraZoom = 1 + Math.sin(progress * 1.5) * 0.03;
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.scale(cameraZoom, cameraZoom);
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+        // Draw 100% Super-Cleaned Transparent Amma Character (Left)
+        if (assets.amma && assets.amma.complete) {
+          const ammaBobbing = Math.sin(progress * 4) * 4;
+          const ammaX = 30 + (lvl >= 7 ? Math.sin(progress * 10) * 3 : 0);
+          ctx.drawImage(assets.amma, ammaX, 40 + ammaBobbing, 190, 270);
+        }
+
+        // Draw User Character (Right: Son or Daughter)
+        let userRecoilX = 0;
+        let userRecoilY = 0;
+        let userRotation = 0;
+
+        // Level 7+ Throw Video Cutscene Physics
+        if (lvl >= 7 && weaponAsset && weaponAsset.complete) {
+          const throwCycle = progress % 3.0; // 3-second video loop sequence
+
+          // Step 1: Amma Aiming & Locking Eyes (0.0s to 0.8s)
+          if (throwCycle < 0.8) {
+            ctx.save();
+            ctx.translate(180, 160);
+            ctx.rotate(-0.35 * (throwCycle / 0.8));
+            ctx.drawImage(weaponAsset, -30, -30, 60, 60);
+            ctx.restore();
+          } 
+          // Step 2: Flying Weapon Throw Video Scene (0.8s to 1.6s)
+          else if (throwCycle >= 0.8 && throwCycle < 1.6) {
+            if (!hasTriggeredWhoosh) {
+              triggerAudio('whoosh');
+              hasTriggeredWhoosh = true;
+            }
+
+            const flightRatio = (throwCycle - 0.8) / 0.8;
+            const projX = 180 + flightRatio * 320;
+            const projY = 160 - Math.sin(flightRatio * Math.PI) * 40;
+            const spinAngle = flightRatio * Math.PI * 8;
+
+            // Weapon Motion Blur Trail
+            ctx.save();
+            ctx.globalAlpha = 0.4;
+            ctx.translate(projX - 25, projY);
+            ctx.rotate(spinAngle - 0.5);
+            ctx.drawImage(weaponAsset, -35, -35, 70, 70);
+            ctx.restore();
+
+            // Main Spinning Weapon
+            ctx.save();
+            ctx.globalAlpha = 1;
+            ctx.translate(projX, projY);
+            ctx.rotate(spinAngle);
+            ctx.drawImage(weaponAsset, -40, -40, 80, 80);
+            ctx.restore();
+          }
+          // Step 3: Impact & User Hit Recoil Reaction (1.6s to 3.0s)
+          else {
+            if (!hasTriggeredImpact) {
+              triggerAudio('slap');
+              hasTriggeredImpact = true;
+            }
+
+            userRecoilX = (Math.random() - 0.5) * 16;
+            userRecoilY = (Math.random() - 0.5) * 16;
+            userRotation = (Math.random() - 0.5) * 0.15;
+
+            // Flash FX
+            if (throwCycle < 1.75) {
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // Dizzy Stars Above User Head
+            ctx.fillStyle = '#fde047';
+            ctx.font = '24px sans-serif';
+            const starRot = progress * 6;
+            ctx.fillText('⭐', 460 + Math.cos(starRot) * 20, 50 + Math.sin(starRot) * 10);
+            ctx.fillText('💫', 500 + Math.cos(starRot + 2) * 20, 45 + Math.sin(starRot + 2) * 10);
+          }
+
+          if (throwCycle >= 2.9) {
+            hasTriggeredWhoosh = false;
+            hasTriggeredImpact = false;
+          }
+        }
+
+        // Draw 100% Transparent User Character Image (Son or Daughter)
+        if (userImgAsset && userImgAsset.complete) {
+          ctx.save();
+          ctx.translate(450 + userRecoilX, 50 + userRecoilY);
+          ctx.rotate(userRotation);
+          ctx.drawImage(userImgAsset, 0, 0, 175, 255);
+          ctx.restore();
+        }
+
+        ctx.restore();
+
+        // Letterbox Video Framing
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, canvas.width, 24);
+        ctx.fillRect(0, canvas.height - 24, canvas.width, 24);
+
+        videoAnimId = requestAnimationFrame(renderVideoFrame);
+      }
+
+      videoAnimId = requestAnimationFrame(renderVideoFrame);
+    }
+
+    /* ==========================================================================
+       RESET STATE
+       ========================================================================== */
+    function resetAllState() {
+      triggerAudio('click');
+      if (videoAnimId) cancelAnimationFrame(videoAnimId);
+
+      appState = {
+        gender: 'male',
+        curfewTime: '23:30',
+        hoursLate: 2.5,
+        currentQuestionIdx: 0,
+        yesAnswersCount: 0,
+        calculatedLevel: 1,
+        soundEnabled: appState.soundEnabled
+      };
+
+      document.body.style.background = 'radial-gradient(circle at center, var(--bg-blue-center) 0%, var(--bg-blue-outer) 100%)';
+      setGender('male');
+      switchFrame(1);
+    }
+  </script>
+</body>
+</html>

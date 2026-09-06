@@ -2,42 +2,47 @@
 
 
 
-# AMMEDE RADAR 🎯
+# [Project Name] 🎯
 
 
 ## Basic Details
-### Team Name: McDonald's
+### Team Name: [Name]
 
 
 ### Team Members
-- Team Lead: Angeleena Sajy - Viswajyothi College of Engineering and Technology
+- Team Lead: [Name] - [College]
+- Member 2: [Name] - [College]
+- Member 3: [Name] - [College]
 
 ### Project Description
-Amma Radar is a humorous, culturally accurate household comedy web application that calculates an Indian mother's ("Amma's") anger level based on a curfew questionnaire and subjects late-arriving children to an escalating series of comedic punishments.
+[2-3 lines about what your project does]
 
 ### The Problem (that doesn't exist)
-Teens and young adults returning home past their curfew have absolutely no way of quantitatively measuring the exact velocity, tactical readiness, or weapon selection of their mother's impending wrath.
+[What ridiculous problem are you solving?]
 
 ### The Solution (that nobody asked for)
-A panic-inducing, interactive web app featuring dynamic weapon-floating animations, a 10-question anxiety-driven interrogation engine, live background color grading, and video-based cutscene punishments ranging from a gentle stare to high-velocity kitchen utensils!
+[How are you solving it? Keep it fun!]
 
 ## Technical Details
 ### Technologies/Components Used
-
 For Software:
-Languages used: HTML5, CSS3, JavaScript (ES6)
-Frameworks used: Vanilla Web Technologies / Responsive UI Frameworks
-Libraries used: Custom CSS Animations, HTML5 Video/Media APIs
-Tools used: Git, GitHub, Vercel
+- [Languages used]
+- [Frameworks used]
+- [Libraries used]
+- [Tools used]
+
+For Hardware:
+- [List main components]
+- [List specifications]
+- [List tools required]
 
 ### Implementation
 For Software:
 # Installation
-git clone https://github.com/your-username/ammde-radar.git
-cd ammde-radar
+[commands]
 
 # Run
-Open index.html in any modern web browser or serve via a local development server (e.g., Live Server in VS Code).
+[commands]
 
 ### Project Documentation
 For Software:
