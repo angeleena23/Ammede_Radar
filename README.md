@@ -2,47 +2,42 @@
 
 
 
-# [Project Name] 🎯
+# AMMEDE RADAR 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: McDonald's
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Team Lead: Angeleena Sajy - Viswajyothi College of Engineering and Technology
 
 ### Project Description
-[2-3 lines about what your project does]
+Amma Radar is a humorous, culturally accurate household comedy web application that calculates an Indian mother's ("Amma's") anger level based on a curfew questionnaire and subjects late-arriving children to an escalating series of comedic punishments.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+Teens and young adults returning home past their curfew have absolutely no way of quantitatively measuring the exact velocity, tactical readiness, or weapon selection of their mother's impending wrath.
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+A panic-inducing, interactive web app featuring dynamic weapon-floating animations, a 10-question anxiety-driven interrogation engine, live background color grading, and video-based cutscene punishments ranging from a gentle stare to high-velocity kitchen utensils!
 
 ## Technical Details
 ### Technologies/Components Used
-For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
 
-For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+For Software:
+Languages used: HTML5, CSS3, JavaScript (ES6)
+Frameworks used: Vanilla Web Technologies / Responsive UI Frameworks
+Libraries used: Custom CSS Animations, HTML5 Video/Media APIs
+Tools used: Git, GitHub, Vercel
 
 ### Implementation
 For Software:
 # Installation
-[commands]
+git clone https://github.com/your-username/ammde-radar.git
+cd ammde-radar
 
 # Run
-[commands]
+Open index.html in any modern web browser or serve via a local development server (e.g., Live Server in VS Code).
 
 ### Project Documentation
 For Software:
