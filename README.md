@@ -25,8 +25,11 @@ A panic-inducing, interactive web app featuring dynamic weapon-floating animatio
 Technologies/Components Used
 For Software:
 Languages used: HTML5, CSS3, JavaScript (ES6)
+
 Frameworks used: Vanilla Web Technologies / Responsive UI Frameworks
+
 Libraries used: Custom CSS Animations, HTML5 Video/Media APIs
+
 Tools used: Git, GitHub, Vercel
 
 ### Implementation
